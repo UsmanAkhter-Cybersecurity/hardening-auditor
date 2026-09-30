@@ -1,0 +1,143 @@
+- id: CIS-5.1.20
+  title: "Ensure sshd PermitRootLogin is disabled"
+  os: linux
+  severity: high
+  description: >
+    Disallowing root logins over SSH requires admins to authenticate with
+    their own account and escalate, preserving a clear audit trail.
+  check:
+    type: command_output
+    command: "sshd -T | grep permitrootlogin"
+    expected: "permitrootlogin no"
+  remediation:
+    action: set_config_value
+    file: /etc/ssh/sshd_config.d/50-permitrootlogin.conf
+    value: "PermitRootLogin no"
+
+
+
+- id: CIS-1.4.1
+  title: "Ensure bootloader password is set" 
+  os: linux
+  severity: high
+  description: >
+    Setting a bootloader password prevents users from modifying boot parameters
+    or booting into single-user mode, which could allow them to gain root access.
+  check:
+    type: command_output
+    command: "grep -i password /boot/grub/grub.cfg"
+    expected: "password_pbkdf2"
+  remediation:
+    action: manual
+    file: /etc/grub.d/40_custom
+    value: "set superusers=\"root\"\npassword_pbkdf2 root <hashed_password>"
+
+
+- id: CIS-4.1.1 
+  title: "Ensure ufw is installed"
+  os: linux
+  severity: medium
+  description: >
+    UFW (Uncomplicated Firewall) is a frontend for managing firewall rules.
+    Installing it ensures that the system has a firewall in place to control
+    incoming and outgoing network traffic.
+  check:
+    type: package_installed
+    package: ufw
+    expected: installed
+  remediation:
+    action: install_package
+    value: ufw
+  
+- id: CIS-5.1.11
+  title: "Ensure sshd IgnoreRhosts is enabled"
+  os: linux
+  severity: high
+  description: >
+    The IgnoreRhosts option in the SSH daemon configuration ensures that
+    the server does not use .rhosts and .shosts files for authentication,
+    which can be insecure. Enabling this option enhances security by
+    requiring more secure authentication methods.
+  check:
+    type: command_output
+    command: "sshd -T | grep ignorerhosts"
+    expected: "ignorerhosts yes"
+  remediation:
+    action: set_config_value
+    file: /etc/ssh/sshd_config.d/50-ignorerhosts.conf
+    value: "IgnoreRhosts yes"
+    
+- id: CIS-7.1.5 
+  title: "Ensure access to /etc/shadow"
+  os: linux
+  severity: high
+  description: >
+    The /etc/shadow file contains hashed passwords for user accounts. 
+    Restricting access to this file is crucial to prevent unauthorized users 
+    from obtaining password hashes, which could be used in offline attacks.
+  check:
+    type: file_permission
+    path: /etc/shadow
+    expected: "640"
+  remediation:
+    action: set_file_permissions
+    value: "640"
+
+
+- id: CIS-3.3.1.1
+  title: "Ensure net.ipv4.ip_forward is configured"
+  os: linux
+  severity: medium
+  description: >
+    The net.ipv4.ip_forward setting controls whether the system can forward
+    IPv4 packets. Disabling IP forwarding is important for systems that are
+    not intended to act as routers, as it reduces the risk of unauthorized
+    packet forwarding and potential network attacks.  
+  check:
+    type: command_output
+    command: "sysctl net.ipv4.ip_forward"
+    expected: "net.ipv4.ip_forward = 0"
+  remediation:
+    action: set_config_value
+    file: /etc/sysctl.conf
+    value: "net.ipv4.ip_forward = 0"
+
+
+
+- id: CIS-5.3.3.1.1
+  title: "Ensure password failed attempts  lockout is configured"
+  os: linux
+  severity: high
+  description: >
+    Configuring account lockout policies after a certain number of failed login
+    attempts helps to mitigate brute-force attacks. By locking accounts after
+    repeated failed attempts, it becomes more difficult for attackers to guess
+    passwords.
+  check:
+    type: config_value
+    file: /etc/security/faillock.conf
+    key: deny
+    expected: "5"
+  remediation:
+    action: set_config_value
+    file: /etc/security/faillock.conf
+    value: "deny = 5"
+
+
+- id: CIS-5.3.3.2.2
+  title: "Ensure password length is configured"
+  os: linux
+  severity: high
+  description: >
+    Enforcing a minimum password length is a fundamental security measure that
+    helps to ensure that users create stronger passwords, making it more
+    difficult for attackers to guess or brute-force them.
+  check:
+    type: config_value
+    file: /etc/security/pwquality.conf
+    key: minlen
+    expected: "14"
+  remediation:
+    action: set_config_value
+    file: /etc/security/pwquality.conf
+    value: "minlen = 14"
