@@ -53,7 +53,7 @@ def run_check(rule):
         error = result.stderr.strip()
 
         passed = rule.check.expected in output
-        print("Passed:", passed, "|" " Actual: ", actual, "|" " Expected: ", rule.check.expected)
+        print("Passed:", passed, "|" " Actual: ", output, "|" " Expected: ", rule.check.expected)
 
 
 
