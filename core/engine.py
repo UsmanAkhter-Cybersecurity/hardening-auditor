@@ -52,8 +52,9 @@ def run_check(rule):
         output = result.stdout.strip()
         error = result.stderr.strip()
 
-        print("STDOUT:", output)
-        print("STDERR:", error)
+        passed = rule.check.expected in output
+        print("Passed:", passed, "|" " Actual: ", actual, "|" " Expected: ", rule.check.expected)
+
 
 
     elif rule.check.type == "config_value": 
