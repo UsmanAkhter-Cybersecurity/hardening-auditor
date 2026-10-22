@@ -69,12 +69,19 @@ def run_check(rule):
                     continue
                 if line.startswith(rule.check.key):
                     found_value = line
-                    
+
             
 
 
-            print("Found Line:", found_value)
-            print("Expected Value:", rule.check.expected)
+            if found_value is None:
+                passed = False
+                actual = "not set"
+
+            else:
+                actual = found_value.split("=")[1].strip()
+                passed = (actual == rule.check.expected)
+
+            print("Passed:", passed, "Actual:", actual, "Expected:", rule.check.expected)
 
         except FileNotFoundError:
             print(f"Configuration file {rule.check.file} not found.")
