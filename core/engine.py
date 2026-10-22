@@ -102,9 +102,9 @@ def run_check(rule):
         output = result.stdout.strip()
        
 
-        passed = result.returncode == 0 and "Install: OK Installed" in output
-        print("Passed:", passed, "|" " Actual: ", output.splitlines()[1] if output else "not installed", "|" " Expected: ", rule.check.expected)
-        
+        passed = result.returncode == 0 and "install ok installed" in output
+        status = "installed" if passed else "not installed"
+        print("Passed:", passed, "| Actual:", status, "| Expected:", rule.check.expected)
            
 
     elif rule.check.type == "file_permission":
