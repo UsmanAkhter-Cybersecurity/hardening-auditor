@@ -100,9 +100,7 @@ def run_check(rule):
         )
 
         output = result.stdout.strip()
-        error = result.stderr.strip()
-        print("STDOUT:", output)
-        print("STDERR:", error)
+       
 
         passed = result.returncode == 0 and "Install: OK Installed" in output
         print("Passed:", passed, "|" " Actual: ", output.splitlines()[1] if output else "not installed", "|" " Expected: ", rule.check.expected)
