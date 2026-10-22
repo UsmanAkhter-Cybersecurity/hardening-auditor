@@ -1,4 +1,8 @@
 import yaml 
+import subprocess
+import os
+import stat
+
 
 from core.rule_schema import Rule, CheckDefinition, RemediationDefinition
 
@@ -33,4 +37,74 @@ def load_rules(yaml_path):
         rules.append(rule)    
 
     return rules
+
+
+
+def run_check(rule):
+    if rule.check.type == "command_output":
+        result = subprocess.run(
+            rule.check.command,
+            shell=True,
+            capture_output=True,
+            text=True
+        )
+
+        output = result.stdout.strip()
+        error = result.stderr.strip()
+
+        print("STDOUT:", output)
+        print("STDERR:", error)
+
+
+    elif rule.check.type == "config_value": 
+        try:
         
+            with open(rule.check.file, 'r') as file:
+                lines = file.readlines()
+            
+            found_value = None
+            for line in lines:
+                if rule.check.key in line: 
+                    found_value = line.strip()
+
+
+            print("Found Line:", found_value)
+            print("Expected Value:", rule.check.expected)
+
+        except FileNotFoundError:
+            print(f"Configuration file {rule.check.file} not found.")
+
+    
+
+
+    elif rule.check.type == "package_installed":
+        command = f"dpkg -s {rule.check.package}"
+        result = subprocess.run(
+            command,
+            shell=True,
+            capture_output=True,
+            text=True
+        )
+
+        output = result.stdout.strip()
+        error = result.stderr.strip()
+        print("STDOUT:", output)
+        print("STDERR:", error)
+
+
+
+
+    elif rule.check.type == "file_permission":
+        try:
+            file_stat = os.stat(rule.check.path)
+            actual_permission = stat.S_IMODE(file_stat.st_mode)
+            expected_permission = int(rule.check.expected, 8) 
+
+
+            print("Actual Permission (octal):", oct(actual_permission))
+            print("Expected Permission (octal):", oct(expected_permission))
+
+        
+        
+        except FileNotFoundError:
+            print(f"File {rule.check.path} not found.") 

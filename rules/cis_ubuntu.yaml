@@ -6,7 +6,7 @@
     Disallowing root logins over SSH requires admins to authenticate with
     their own account and escalate, preserving a clear audit trail.
   check:
-    type: command_output
+    type: command_output        #
     command: "sshd -T | grep permitrootlogin"
     expected: "permitrootlogin no"
   remediation:
@@ -114,7 +114,7 @@
     repeated failed attempts, it becomes more difficult for attackers to guess
     passwords.
   check:
-    type: config_value
+    type: config_value  #
     file: /etc/security/faillock.conf
     key: deny
     expected: "5"
