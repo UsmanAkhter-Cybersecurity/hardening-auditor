@@ -104,18 +104,20 @@ def run_check(rule):
         print("STDOUT:", output)
         print("STDERR:", error)
 
-
-
+        passed = result.returncode == 0 and "Install: OK Installed" in output
+        print("Passed:", passed, "|" " Actual: ", output.splitlines()[1] if output else "not installed", "|" " Expected: ", rule.check.expected)
+        
+           
 
     elif rule.check.type == "file_permission":
         try:
             file_stat = os.stat(rule.check.path)
             actual_permission = stat.S_IMODE(file_stat.st_mode)
             expected_permission = int(rule.check.expected, 8) 
-
-
-            print("Actual Permission (octal):", oct(actual_permission))
-            print("Expected Permission (octal):", oct(expected_permission))
+            
+            passed = actual_permission == expected_permission
+            print("Passed:", passed, "|", " Actual: ", oct(actual_permission), "|" " Expected: ", oct(expected_permission))
+        
 
         
         
