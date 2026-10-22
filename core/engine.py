@@ -64,8 +64,13 @@ def run_check(rule):
             
             found_value = None
             for line in lines:
-                if rule.check.key in line: 
-                    found_value = line.strip()
+                line = line.strip()
+                if line.startswith("#") or not line:
+                    continue
+                if line.startswith(rule.check.key):
+                    found_value = line
+                    
+            
 
 
             print("Found Line:", found_value)
