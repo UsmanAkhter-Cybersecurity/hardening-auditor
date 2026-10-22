@@ -81,7 +81,7 @@ def run_check(rule):
                 actual = found_value.split("=")[1].strip()
                 passed = (actual == rule.check.expected)
 
-            print("Passed:", passed, "Actual:", actual, "Expected:", rule.check.expected)
+            print("Passed:", passed, "|" "Actual: ", actual, "|" "Expected: ", rule.check.expected)
 
         except FileNotFoundError:
             print(f"Configuration file {rule.check.file} not found.")
